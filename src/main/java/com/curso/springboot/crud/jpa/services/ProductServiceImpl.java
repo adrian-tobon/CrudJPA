@@ -52,12 +52,19 @@ public class ProductServiceImpl implements ProductService {
 			productDb.setName(product.getName());
 			productDb.setPrice(product.getPrice());
 			productDb.setDescription(product.getDescription());
+			productDb.setSKU(product.getSKU());
 			productRepository.save(productDb);
 
 			return Optional.of(productDb);
 		} else {
 			return Optional.empty();
 		}
+	}
+
+	@Override
+	@Transactional(readOnly=true)
+	public boolean existsBySKU(String sku) {
+		return productRepository.existsBySKU(sku);
 	}
 
 }

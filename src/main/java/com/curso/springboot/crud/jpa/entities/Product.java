@@ -2,6 +2,10 @@ package com.curso.springboot.crud.jpa.entities;
 
 import java.util.Objects;
 
+import com.curso.springboot.crud.jpa.validation.isExistsDb;
+import com.curso.springboot.crud.jpa.validation.isRequired;
+
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -21,15 +25,21 @@ public class Product {
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Long id;
 	
-	@NotEmpty
+	@NotEmpty(message = "{NotEmpty.product.name}")
 	@Size(min=3, max = 20)
 	private String name;
 	
-	@NotNull
-	@Min(500)
+	@Column(name="sku")
+	@isExistsDb
+	@isRequired
+	private String SKU;
+	
+	@NotNull(message = "{NotNull.product.price}")
+	@Min(value = 500,message= "{Min.product.price}")
 	private Integer price;
 	
-	@NotBlank
+	//@NotBlank(message = "{NotBlank.product.description}")
+	@isRequired
 	private String description;
 	
 	
@@ -80,6 +90,16 @@ public class Product {
 	public int hashCode() {
 		return Objects.hash(description, id, name, price);
 	}
+	
+	
+
+	public String getSKU() {
+		return SKU;
+	}
+
+	public void setSKU(String sKU) {
+		SKU = sKU;
+	}
 
 	@Override
 	public boolean equals(Object obj) {
@@ -96,7 +116,8 @@ public class Product {
 
 	@Override
 	public String toString() {
-		return "{id=" + id + ", name=" + name + ", price=" + price + ", description=" + description + "}";
+		return "{id=" + id + ", name=" + name + ", SKU=" + SKU + ", price=" + price + ", description="
+				+ description + "{";
 	}
 	
 	

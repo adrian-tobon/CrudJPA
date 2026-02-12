@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.curso.springboot.crud.jpa.ProductValidator;
 import com.curso.springboot.crud.jpa.entities.Product;
 import com.curso.springboot.crud.jpa.services.ProductService;
 
@@ -29,6 +30,9 @@ public class ProductController {
 
 	@Autowired
 	private ProductService productService;
+	
+	/*@Autowired
+	private ProductValidator productValidator;*/
 
 	/*
 	 * private final ProductService productService2; public
@@ -58,6 +62,8 @@ public class ProductController {
 
 		// Product newProduct = productService.save(product);
 		// return ResponseEntity.status(HttpStatus.CREATED).body(newProduct);
+		
+		//productValidator.validate(product, result);
 		if(result.hasFieldErrors()) {
 			return 	validation(result);		
 		}
@@ -68,6 +74,7 @@ public class ProductController {
 
 	@PutMapping("/{id}")
 	public ResponseEntity<?> update(@Valid @RequestBody Product updatedProduct, BindingResult result, @PathVariable Long id) {
+		//productValidator.validate(updatedProduct, result);
 		if(result.hasFieldErrors()) {
 			return validation(result);		
 		}
