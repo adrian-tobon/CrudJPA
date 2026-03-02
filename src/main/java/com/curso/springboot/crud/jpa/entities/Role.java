@@ -24,11 +24,11 @@ public class Role {
 	@Column(unique=true)
 	private String name;
 	
-	@ManyToMany(fetch = FetchType.EAGER,mappedBy = "roles")
-	private List<User> users;
+	//@ManyToMany(fetch = FetchType.EAGER,mappedBy = "roles")
+	//private List<User> users;
 	
 	public Role() {
-		users = new ArrayList<>();
+		//users = new ArrayList<>();
 	}
 
 	public Role(String name) {
@@ -52,13 +52,13 @@ public class Role {
 		this.name = name;
 	}
 
-	public List<User> getUsers() {
+	/*public List<User> getUsers() {
 		return users;
 	}
 
 	public void setUsers(List<User> users) {
 		this.users = users;
-	}
+	}*/
 
 	@Override
 	public int hashCode() {

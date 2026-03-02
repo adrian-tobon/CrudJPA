@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import org.hibernate.annotations.ColumnDefault;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -17,6 +19,8 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 import jakarta.persistence.UniqueConstraint;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
 @Entity
 @Table(name="users")
@@ -27,11 +31,15 @@ public class User {
 	private Long id;
 	
 	@Column(unique=true)
+	@NotBlank
+	@Size(min = 4,max = 12)
 	private String username;
 	
+	@NotBlank
+	@Size(min = 8)
 	private String password;
 	
-	private boolean enabled;
+	private boolean enable;
 	
 	@ManyToMany/*(cascade= {CascadeType.PERSIST,CascadeType.MERGE},fetch = FetchType.EAGER)*/
 	@JoinTable(name = "users_roles", 
@@ -41,7 +49,7 @@ public class User {
 	private List<Role> roles;
 	
 	@Transient
-	private boolean isAdmin;
+	private boolean admin;
 
 	public User() {
 		roles = new ArrayList<>();
@@ -79,11 +87,11 @@ public class User {
 	}
 
 	public boolean isEnabled() {
-		return enabled;
+		return enable;
 	}
 
-	public void setEnabled(boolean enabled) {
-		this.enabled = enabled;
+	public void setEnabled(boolean enable) {
+		this.enable = enable;
 	}
 
 	public List<Role> getRoles() {
@@ -96,17 +104,15 @@ public class User {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(enabled, id, username, password);
+		return Objects.hash(enable, id, username, password);
 	}
 	
-	
-
 	public boolean isAdmin() {
-		return isAdmin;
+		return admin;
 	}
 
-	public void setAdmin(boolean isAdmin) {
-		this.isAdmin = isAdmin;
+	public void setAdmin(boolean admin) {
+		this.admin = admin;
 	}
 
 	@Override
@@ -118,13 +124,13 @@ public class User {
 		if (getClass() != obj.getClass())
 			return false;
 		User other = (User) obj;
-		return enabled == other.enabled && Objects.equals(id, other.id) && Objects.equals(username, other.username)
+		return enable == other.enable && Objects.equals(id, other.id) && Objects.equals(username, other.username)
 				&& Objects.equals(password, other.password);
 	}
 
 	@Override
 	public String toString() {
-		return "{id=" + id + ", username=" + username + ", password=" + password + ", enabled=" + enabled + ", roles="
+		return "{id=" + id + ", username=" + username + ", password=" + password + ", enable=" + enable + ", roles="
 				+ roles + "}";
 	}
 	
