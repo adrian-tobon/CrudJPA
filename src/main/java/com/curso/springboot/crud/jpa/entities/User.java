@@ -39,6 +39,7 @@ public class User {
 	@Size(min = 8)
 	private String password;
 	
+	//me falla cunaod no viene el campo me lo pone el false,  por defecto debe ser true
 	private boolean enable;
 	
 	@ManyToMany/*(cascade= {CascadeType.PERSIST,CascadeType.MERGE},fetch = FetchType.EAGER)*/
