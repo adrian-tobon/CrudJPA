@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import org.hibernate.annotations.ColumnDefault;
+import com.curso.springboot.crud.jpa.validation.ExistsByUsername;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -16,6 +18,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 import jakarta.persistence.UniqueConstraint;
@@ -31,17 +34,25 @@ public class User {
 	private Long id;
 	
 	@Column(unique=true)
+	@ExistsByUsername
 	@NotBlank
 	@Size(min = 4,max = 12)
 	private String username;
 	
 	@NotBlank
 	@Size(min = 8)
+	@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
 	private String password;
 	
-	//me falla cunaod no viene el campo me lo pone el false,  por defecto debe ser true
+	//cuando el campo viene en false o no viene, me lo pone en true
 	private boolean enable;
 	
+	@PrePersist
+	public void prePersist() {			
+			enable = true;				
+	}	
+	
+	@JsonIgnoreProperties({"users","handler","hibernateLazyInitializer"})
 	@ManyToMany/*(cascade= {CascadeType.PERSIST,CascadeType.MERGE},fetch = FetchType.EAGER)*/
 	@JoinTable(name = "users_roles", 
 	   joinColumns = @JoinColumn(name = "user_id"),
@@ -50,10 +61,12 @@ public class User {
 	private List<Role> roles;
 	
 	@Transient
+	@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
 	private boolean admin;
 
 	public User() {
-		roles = new ArrayList<>();
+		roles = new ArrayList<>();		
+		
 	}
 	
 	public User(String username, String password) {
@@ -105,14 +118,14 @@ public class User {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(enable, id, username, password);
+		return Objects.hash(id, username);
 	}
 	
-	public boolean isAdmin() {
+	public Boolean isAdmin() {
 		return admin;
 	}
 
-	public void setAdmin(boolean admin) {
+	public void setAdmin(Boolean admin) {
 		this.admin = admin;
 	}
 
@@ -125,8 +138,7 @@ public class User {
 		if (getClass() != obj.getClass())
 			return false;
 		User other = (User) obj;
-		return enable == other.enable && Objects.equals(id, other.id) && Objects.equals(username, other.username)
-				&& Objects.equals(password, other.password);
+		return Objects.equals(id, other.id) && Objects.equals(username, other.username);
 	}
 
 	@Override

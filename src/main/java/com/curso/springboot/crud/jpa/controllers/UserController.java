@@ -6,7 +6,6 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.curso.springboot.crud.jpa.entities.User;
-import com.curso.springboot.crud.jpa.repositories.UserRepository;
 import com.curso.springboot.crud.jpa.services.UserService;
 
 import jakarta.validation.Valid;
@@ -50,6 +48,13 @@ public class UserController {
 			return validation(result);		
 		}
 		return ResponseEntity.status(HttpStatus.CREATED).body(userService.save(user));
+	}
+	
+	@PostMapping("/register")
+	public ResponseEntity<?> register(@Valid @RequestBody User user, BindingResult result) {	
+			
+		user.setAdmin(false);
+		return save(user,result);
 	}
 	
 	
