@@ -7,7 +7,9 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,6 +21,8 @@ import com.curso.springboot.crud.jpa.services.UserService;
 
 import jakarta.validation.Valid;
 
+//@CrossOrigin(origins={"https://localhost:4200"})
+@CrossOrigin(originPatterns = {"https://localhost:4200","*"})
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
@@ -41,6 +45,14 @@ public class UserController {
 	}
 	
 	
+	@PostMapping("/register")
+	public ResponseEntity<?> register(@Valid @RequestBody User user, BindingResult result) {	
+			
+		user.setAdmin(false);
+		return save(user,result);
+	}
+	
+	@PreAuthorize("hasRole('ADMIN')")
 	@PostMapping
 	public ResponseEntity<?> save(@Valid @RequestBody User user, BindingResult result) {	
 		
@@ -50,12 +62,7 @@ public class UserController {
 		return ResponseEntity.status(HttpStatus.CREATED).body(userService.save(user));
 	}
 	
-	@PostMapping("/register")
-	public ResponseEntity<?> register(@Valid @RequestBody User user, BindingResult result) {	
-			
-		user.setAdmin(false);
-		return save(user,result);
-	}
+	
 	
 	
 	private ResponseEntity<?> validation(BindingResult result) {

@@ -8,7 +8,9 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,6 +26,8 @@ import com.curso.springboot.crud.jpa.services.ProductService;
 
 import jakarta.validation.Valid;
 
+//@CrossOrigin(origins={"https://localhost:4200"})
+@CrossOrigin(originPatterns = {"https://localhost:4200","*"})
 @RestController
 @RequestMapping("/api/products")
 public class ProductController {
@@ -40,13 +44,15 @@ public class ProductController {
 	 * productService2; }
 	 */
 
-	@GetMapping
+	@GetMapping@
+	PreAuthorize("hasAnyRole('ADMIN','USER')")
 	public List<Product> list() {
 		return productService.findAll();
 	}
 
 	// path variable
 	@GetMapping("/{id}")
+	@PreAuthorize("hasAnyRole('ADMIN','USER')")
 	public ResponseEntity<?> view(@PathVariable Long id) {
 
 		Optional<Product> optProduct = productService.findById(id);
@@ -58,6 +64,7 @@ public class ProductController {
 	}
 
 	@PostMapping
+	@PreAuthorize("hasRole('ADMIN')")
 	public ResponseEntity<?> save(@Valid @RequestBody Product product, BindingResult result) {
 
 		// Product newProduct = productService.save(product);
@@ -73,6 +80,7 @@ public class ProductController {
 	}
 
 	@PutMapping("/{id}")
+	@PreAuthorize("hasRole('ADMIN')")
 	public ResponseEntity<?> update(@Valid @RequestBody Product updatedProduct, BindingResult result, @PathVariable Long id) {
 		//productValidator.validate(updatedProduct, result);
 		if(result.hasFieldErrors()) {
@@ -88,6 +96,7 @@ public class ProductController {
 	}	
 
 	@DeleteMapping("/{id}")
+	@PreAuthorize("hasRole('ADMIN')")
 	public ResponseEntity<?> delete(@PathVariable Long id) {
 
 		Optional<Product> deletedProduct = productService.delete(id);
