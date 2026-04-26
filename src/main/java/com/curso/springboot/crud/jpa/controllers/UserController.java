@@ -52,7 +52,7 @@ public class UserController {
 		return save(user,result);
 	}
 	
-	@PreAuthorize("hasRole('ADMIN')")
+	//@PreAuthorize("hasRole('ADMIN')")
 	@PostMapping
 	public ResponseEntity<?> save(@Valid @RequestBody User user, BindingResult result) {	
 		
